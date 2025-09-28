@@ -57,7 +57,7 @@ remove_floating_ip() {
 # مشاهده لاگ ریبوت
 view_reboot_log() {
   echo "مشاهده لاگ ریبوت..."
-  # نمایش لاگ‌های ریبوت از فایل
+  # بررسی و نمایش لاگ‌های ریبوت از فایل
   if [ -f /var/log/reboot_log.txt ]; then
     cat /var/log/reboot_log.txt
   else
@@ -65,6 +65,25 @@ view_reboot_log() {
   fi
   sleep 2
   main_menu
+}
+
+# ایجاد لاگ‌ فایل قبل از ریبوت
+create_reboot_log_file() {
+  # بررسی وجود فایل لاگ
+  if [ ! -f /var/log/reboot_log.txt ]; then
+    sudo touch /var/log/reboot_log.txt
+    sudo chmod 666 /var/log/reboot_log.txt
+    echo "فایل لاگ ایجاد شد."
+  fi
+}
+
+# فعال کردن ریبوت خودکار و ایجاد فایل لاگ
+enable_auto_reboot_with_log() {
+  create_reboot_log_file
+  echo "در حال فعال کردن ریبوت خودکار..."
+  # تنظیم کرون‌جاب برای ذخیره لاگ‌ها
+  (crontab -l 2>/dev/null; echo "30 22 * * * /sbin/shutdown -r now >> /var/log/reboot_log.txt 2>&1") | crontab -  
+  echo "ریبوت خودکار فعال شد." ; sleep 2 ; main_menu
 }
 
 # اجرا کردن منو
