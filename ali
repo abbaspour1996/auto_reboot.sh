@@ -27,7 +27,7 @@ main_menu() {
 enable_auto_reboot() {
   echo "در حال فعال کردن ریبوت خودکار..."
   # تنظیم کرون‌جاب برای ساعت 10:30 شب به وقت آلمان (پاییز) که معادل 1 شب به وقت ایران است
-  (crontab -l 2>/dev/null; echo "30 22 * * * /sbin/shutdown -r now") | crontab -  
+  (crontab -l 2>/dev/null; echo "30 22 * * * /sbin/shutdown -r now >> /var/log/reboot_log.txt 2>&1") | crontab -  
   echo "ریبوت خودکار فعال شد." ; sleep 2 ; main_menu
 }
 
