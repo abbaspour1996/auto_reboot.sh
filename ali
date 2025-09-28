@@ -10,7 +10,8 @@ main_menu() {
   echo "2. غیرفعال کردن ریبوت خودکار"
   echo "3. اضافه کردن Floating IP"
   echo "4. حذف Floating IP"
-  echo "5. خروج"
+  echo "5. مشاهده لاگ ریبوت"
+  echo "6. خروج"
   echo "========================="
   read -p "لطفاً گزینه مورد نظر را وارد کنید: " option
   case $option in
@@ -18,7 +19,8 @@ main_menu() {
     2) disable_auto_reboot ;;
     3) add_floating_ip ;;
     4) remove_floating_ip ;;
-    5) exit ;;
+    5) view_reboot_log ;;
+    6) exit ;;
     *) echo "لطفاً یک گزینه معتبر وارد کنید." ; sleep 2 ; main_menu ;;
   esac
 }
@@ -50,6 +52,19 @@ remove_floating_ip() {
   read -p "لطفاً ایپی را وارد کنید که میخواهید حذف شود: " floating_ip
   sudo ip addr del $floating_ip dev eth0
   echo "Floating IP $floating_ip حذف شد." ; sleep 2 ; main_menu
+}
+
+# مشاهده لاگ ریبوت
+view_reboot_log() {
+  echo "مشاهده لاگ ریبوت..."
+  # نمایش لاگ‌های ریبوت از فایل
+  if [ -f /var/log/reboot_log.txt ]; then
+    cat /var/log/reboot_log.txt
+  else
+    echo "فایل لاگ پیدا نشد یا خالی است."
+  fi
+  sleep 2
+  main_menu
 }
 
 # اجرا کردن منو
