@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# منوی اصلی
+main_menu() {
+  clear
+  echo "========================="
+  echo "   منوی تنظیمات سرور   "
+  echo "========================="
+  echo "1. فعال کردن ریبوت خودکار"
+  echo "2. غیرفعال کردن ریبوت خودکار"
+  echo "3. اضافه کردن Floating IP"
+  echo "4. حذف Floating IP"
+  echo "5. خروج"
+  echo "========================="
+  read -p "لطفاً گزینه مورد نظر را وارد کنید: " option
+  case $option in
+    1) enable_auto_reboot ;;
+    2) disable_auto_reboot ;;
+    3) add_floating_ip ;;
+    4) remove_floating_ip ;;
+    5) exit ;;
+    *) echo "لطفاً یک گزینه معتبر وارد کنید." ; sleep 2 ; main_menu ;;
+  esac
+}
+
+# فعال کردن ریبوت خودکار هر شب ساعت 10:30 شب به وقت آلمان (معادل 1 شب به وقت ایران)
+enable_auto_reboot() {
+  echo "در حال فعال کردن ریبوت خودکار..."
+  # تنظیم کرون‌جاب برای ساعت 10:30 شب به وقت آلمان (پاییز) که معادل 1 شب به وقت ایران است
+  (crontab -l 2>/dev/null; echo "30 22 * * * /sbin/shutdown -r now") | crontab -  
+  echo "ریبوت خودکار فعال شد." ; sleep 2 ; main_menu
+}
+
+# غیرفعال کردن ریبوت خودکار
+disable_auto_reboot() {
+  echo "در حال غیرفعال کردن ریبوت خودکار..."
+  crontab -l | grep -v '/sbin/shutdown -r now' | crontab -
+  echo "ریبوت خودکار غیرفعال شد." ; sleep 2 ; main_menu
+}
+
+# اضافه کردن Floating IP
+add_floating_ip() {
+  read -p "لطفاً ایپی را وارد کنید: " floating_ip
+  sudo ip addr add $floating_ip dev eth0
+  echo "Floating IP $floating_ip اضافه شد." ; sleep 2 ; main_menu
+}
+
+# حذف Floating IP
+remove_floating_ip() {
+  read -p "لطفاً ایپی را وارد کنید که میخواهید حذف شود: " floating_ip
+  sudo ip addr del $floating_ip dev eth0
+  echo "Floating IP $floating_ip حذف شد." ; sleep 2 ; main_menu
+}
+
+# اجرا کردن منو
+main_menu
